@@ -358,7 +358,23 @@ class TerminalInteractiveShell(InteractiveShell):
 
     def init_readline(self):
         """Command history completion/saving/reloading."""
-
+        self.readline_use = True
+        self._custom_readline_config = False
+        self.readline_parse_and_bind = [
+            'tab: complete',
+            '"\C-l": clear-screen',
+            'set show-all-if-ambiguous on',
+            '"\C-o": tab-insert',
+            '"\C-r": reverse-search-history',
+            '"\C-s": forward-search-history',
+            '"\C-p": history-search-backward',
+            '"\C-n": history-search-forward',
+            '"\e[A": history-search-backward',
+            '"\e[B": history-search-forward',
+            '"\C-k": kill-line',
+            '"\C-u": unix-line-discard']
+        self.readline_remove_delims = '-/~'
+        self.multiline_history = False
         if self.readline_use:
             import IPython.utils.rlineimpl as readline
 
@@ -443,11 +459,13 @@ class TerminalInteractiveShell(InteractiveShell):
         super(TerminalInteractiveShell, self).init_completer()
 
         # Only configure readline if we truly are using readline.
+        self.init_readline()
         if self.has_readline:
             self.set_readline_completer()
 
     def set_readline_completer(self):
         """Reset readline's completer to be our own."""
+        self.Completer.readline = self.readline
         self.readline.set_completer(self.Completer.rlcomplete)
 
 
