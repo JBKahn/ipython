@@ -11,7 +11,6 @@ This document describes in-flight development work.
     `docs/source/whatsnew/pr` folder
 
 
-
 .. DO NOT EDIT THIS LINE BEFORE RELEASE. FEATURE INSERTION POINT.
 
 
