@@ -21,6 +21,7 @@ done some work in the REPL.
    plotting
    reference
    shell
+   autoawait
    tips
    python-ipython-diff
    magics
