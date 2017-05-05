@@ -87,7 +87,7 @@ We welcome any feedback on these new API, and we also encourage you to try this
 module in debug mode (start IPython with ``--Completer.debug=True``) in order
 to have extra logging information is :any:`jedi` is crashing, or if current
 IPython completer pending deprecations are returning results not yet handled
-by :any:`jedi`.
+by :any:`jedi`
 
 Using Jedi for tab completion allow snippets like the following to work without
 having to execute any code:
@@ -366,7 +366,7 @@ class Completion:
     ``IPython.python_matches``, ``IPython.magics_matches``...).
     """
 
-    def __init__(self, start: int, end: int, text: str, *, type: str=None, _origin=''):
+    def __init__(self, start: int, end: int, text: str, *, type: str=None, _origin='', signature=''):
         warnings.warn("``Completion`` is a provisional API (as of IPython 6.0). "
                       "It may change without warnings. "
                       "Use in corresponding context manager.",
@@ -376,6 +376,7 @@ class Completion:
         self.end = end
         self.text = text
         self.type = type
+        self.signature = signature
         self._origin = _origin
 
     def __repr__(self):
@@ -923,6 +924,17 @@ def back_latex_name_matches(text:str):
         pass
     return u'', ()
 
+import jedi.api.classes
+
+def formatparamchildren(p):
+    tree_name = p._name.tree_name
+    if tree_name:
+        return tree_name.get_definition().get_description()
+    else:
+        return p.name
+    
+def formatcompletion(completion):
+    return '(%s)'% ', '.join([formatparamchildren(p) for p in completion.params])
 
 class IPCompleter(Completer):
     """Extension of the completer class with IPython-specific features"""
@@ -1696,10 +1708,15 @@ class IPCompleter(Completer):
                         print("Error in Jedi getting type of ", jm)
                     type_ = None
                 delta = len(jm.name_with_symbols) - len(jm.complete)
+                if type_ == 'function':
+                    signature = formatcompletion(jm)
+                else:
+                    signature = ''
                 yield Completion(start=offset - delta,
                                  end=offset,
                                  text=jm.name_with_symbols,
                                  type=type_,
+                                 signature=signature,
                                  _origin='jedi')
 
                 if time.monotonic() > deadline:

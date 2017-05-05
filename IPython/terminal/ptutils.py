@@ -33,9 +33,8 @@ def _elide(string, *, min_elide=30):
 
     parts = string.split('.')
 
-    if len(parts) <= 3:
+    if len(parts) <= 4:
         return string
-
     return '{}.{}\N{HORIZONTAL ELLIPSIS}{}.{}'.format(parts[0], parts[1][0], parts[-2][-1], parts[-1])
 
 
@@ -110,9 +109,9 @@ class IPythonPTCompleter(Completer):
             display_text = c.text
 
             if c.type == 'function':
-                display_text = display_text + '()'
-
-            yield Completion(c.text, start_position=c.start - offset, display=_elide(display_text), display_meta=c.type)
+                yield Completion(c.text, start_position=c.start - offset, display=_elide(display_text+'()'), display_meta=c.type+c.signature)
+            else:
+                yield Completion(c.text, start_position=c.start - offset, display=_elide(display_text), display_meta=c.type)
 
 class IPythonPTLexer(Lexer):
     """
