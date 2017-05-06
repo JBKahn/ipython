@@ -338,6 +338,7 @@ class _FakeJediCompletion:
         self.complete = name
         self.type = 'crashed'
         self.name_with_symbols = name
+        self.signature = ''
 
     def __repr__(self):
         return '<Fake completion object jedi has crashed>'
@@ -490,7 +491,7 @@ def rectify_completions(text: str, completions: _IC, *, _debug=False)->_IC:
             seen_jedi.add(new_text)
         elif c._origin == 'IPCompleter.python_matches':
             seen_python_matches.add(new_text)
-        yield Completion(new_start, new_end, new_text, type=c.type, _origin=c._origin)
+        yield Completion(new_start, new_end, new_text, type=c.type, _origin=c._origin, signature=c.signature)
     diff = seen_python_matches.difference(seen_jedi)
     if diff and _debug:
         print('IPython.python matches have extras:', diff)
