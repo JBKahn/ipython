@@ -100,7 +100,7 @@ import sys
 import time
 import tokenize
 import traceback
-import types
+import sysconfig
 
 try:  # Python 2
     generate_tokens = tokenize.generate_tokens
@@ -138,6 +138,16 @@ DEFAULT_SCHEME = 'NoColor'
 
 # ---------------------------------------------------------------------------
 # Code begins
+
+
+_STD = sysconfig.get_paths()['stdlib']
+
+def compress_site(path):
+    """Reverse of :func:`os.path.expanduser`
+    """
+    if path.startswith(_STD):
+        path =  "$STDLIB" + path[len(_STD):]
+    return path
 
 # Utility functions
 def inspect_error():
@@ -336,6 +346,8 @@ def fix_frame_records_filenames(records):
                 # __file__. It might also be None if the error occurred during
                 # import.
                 filename = better_fn
+        filename = compress_site(filename)
+        filename = util_path.compress_user(filename)
         fixed_records.append((frame, filename, line_no, func_name, lines, index))
     return fixed_records
 
@@ -1026,6 +1038,7 @@ class VerboseTB(TBTools):
             head = '%s%s%s\n%s%s%s\n%s' % (colors.topline, '-' * width, colorsnormal,
                                            exc, ' ' * (width - len(str(etype)) - len(pyver)),
                                            pyver, date.rjust(width) )
+            head += "\nwith $STDLIB=%s\n" % _STD
             head += "\nA problem occurred executing Python code.  Here is the sequence of function" \
                     "\ncalls leading up to the error, with the most recent (innermost) call last."
         else:
@@ -1125,13 +1138,15 @@ class VerboseTB(TBTools):
     def structured_traceback(self, etype, evalue, etb, tb_offset=None,
                              number_of_lines_of_context=5):
         """Return a nice text document describing the traceback."""
-
         formatted_exception = self.format_exception_as_a_whole(etype, evalue, etb, number_of_lines_of_context,
                                                                tb_offset)
 
         colors = self.Colors  # just a shorthand + quicker name lookup
         colorsnormal = colors.Normal  # used a lot
-        head = '%s%s%s' % (colors.topline, '-' * min(75, get_terminal_size()[0]), colorsnormal)
+        line = '%s%s%s' % (colors.topline, '-' * min(75, get_terminal_size()[0]), colorsnormal)
+        head = line
+        head += "\n%sWith $STDLIB=%s%s:\n" % (colors.filename, repr(_STD), colorsnormal)
+        head += line
         structured_traceback_parts = [head]
         if py3compat.PY3:
             chained_exceptions_tb_offset = 0
