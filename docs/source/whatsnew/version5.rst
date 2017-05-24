@@ -58,7 +58,9 @@ Miscs
   :ghpull:`10523`
 * Use user colorscheme in Pdb as well :ghpull:`10479`
 * Faster shutdown. :ghpull:`10408` 
-* Fix a crash in reverse search. :ghpull:`10371` 
+* Fix a crash in reverse search. :ghpull:`10371`
+* added ``Completer.backslash_combining_completions`` boolean option to
+ deactivate backslash-tab completion that may conflict with windows path.
 
 IPython 5.3
 ===========
