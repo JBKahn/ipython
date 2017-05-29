@@ -228,3 +228,52 @@ a :ref:`startup file <startup_files>`::
 For more information on filters and what you can do with the ``event`` object,
 `see the prompt_toolkit docs
 <http://python-prompt-toolkit.readthedocs.io/en/latest/pages/building_prompts.html#adding-custom-key-bindings>`__.
+
+
+Enter to execute
+----------------
+
+As the exact behavior of :kbd:`Enter` is subject to disagreement, it has been
+special cased in order for users to completely configure the behavior they like.
+Hence you can have enter to start your coffee machine on even days of odd month,
+or simply alway execute code. You'll have to get your hand dirty and read
+prompt_toolkit and IPython documentation though. See :ghpull:`10500`, set the
+`c.TerminalInteractiveShell.handle_return` option and get inspiration from the
+following example that insert the zen of Python in your buffer if the current
+content is ``zen``. Place the following in your config to do so.::
+
+    zen_of_python = """'''
+    Beautiful is better than ugly.
+    Explicit is better than implicit.
+    Simple is better than complex.
+    Complex is better than complicated.
+    Flat is better than nested.
+    Sparse is better than dense.
+    Readability counts.
+    Special cases aren't special enough to break the rules.
+    Although practicality beats purity.
+    Errors should never pass silently.
+    Unless explicitly silenced.
+    In the face of ambiguity, refuse the temptation to guess.
+    There should be one-- and preferably only one --obvious way to do it.
+    Although that way may not be obvious at first unless you're Dutch.
+    Now is better than never.
+    Although never is often better than *right* now.
+    If the implementation is hard to explain, it's a bad idea.
+    If the implementation is easy to explain, it may be a good idea.
+    Namespaces are one honking great idea -- let's do more of those!
+    '''"""
+
+    def insert_zen_python(shell):
+        # shell is the same as get_ipython()
+        def insert(event):
+            """When the user presses return, insert"""
+            b = event.current_buffer
+            d = b.document
+            if d.text == 'zen':
+                b.text = zen_of_python
+            else:
+                b.accept_action.validate_and_handle(event.cli, b)
+        return insert
+
+    c.TerminalInteractiveShell.handle_return = insert_zen_python 
