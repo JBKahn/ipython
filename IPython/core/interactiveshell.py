@@ -143,6 +143,33 @@ def softspace(file, newvalue):
 def no_op(*a, **kw):
     pass
 
+def display_ast_factory(name):
+    return ast.Expr(
+      value=ast.Call(
+        func=ast.Attribute(
+          value=ast.Attribute(
+            value=ast.Call(
+              func=ast.Name(id='__import__', ctx=ast.Load()),
+              args=[
+                ast.Str(
+                  s='IPython.display',
+                ),
+              ],
+              keywords=[],
+            ),
+            attr='display',
+            ctx=ast.Load(),
+          ),
+          attr='display',
+          ctx=ast.Load(),
+        ),
+        args=[
+          ast.Name(id=name, ctx=ast.Load()),
+        ],
+        keywords=[],
+      ),
+    )
+
 
 class SpaceInInput(Exception): pass
 
@@ -386,7 +413,8 @@ class InteractiveShell(SingletonConfigurable):
         """
     ).tag(config=True)
 
-    ast_node_interactivity = Enum(['all', 'last', 'last_expr', 'none', 'last_expr_or_assign'],
+    ast_node_interactivity = Enum(['all', 'last', 'last_expr', 'none', 'return_last_expr_or_assign',
+                                   'display_last_expr_or_assign'],
                                   default_value='last_expr',
                                   help="""
         'all', 'last', 'last_expr' or 'none', 'last_expr_or_assign' specifying
@@ -2794,7 +2822,7 @@ class InteractiveShell(SingletonConfigurable):
         if not nodelist:
             return
 
-        if interactivity == 'last_expr_or_assign':
+        if interactivity == 'return_last_expr_or_assign':
             if isinstance(nodelist[-1], _assign_nodes):
                 asg = nodelist[-1]
                 if isinstance(asg, ast.Assign) and len(asg.targets) == 1:
@@ -2808,6 +2836,21 @@ class InteractiveShell(SingletonConfigurable):
                     ast.fix_missing_locations(nnode)
                     nodelist.append(nnode)
             interactivity = 'last_expr'
+        elif interactivity == 'display_last_expr_or_assign':
+            if isinstance(nodelist[-1], _assign_nodes):
+                asg = nodelist[-1]
+                if isinstance(asg, ast.Assign) and len(asg.targets) == 1:
+                    target = asg.targets[0]
+                elif isinstance(asg, _single_targets_nodes):
+                    target = asg.target
+                else:
+                    target = None
+                if isinstance(target, ast.Name):
+                    nnode = display_ast_factory(target.id)
+                    ast.fix_missing_locations(nnode)
+                    nodelist.append(nnode)
+            interactivity = 'last_expr'
+
 
         if interactivity == 'last_expr':
             if isinstance(nodelist[-1], ast.Expr):
