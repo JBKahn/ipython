@@ -6,6 +6,9 @@ python:
     - 3.5
     - 3.4
 sudo: false
+branches:
+  except:
+    - /^auto-backport-of-pr-[0-9]+$/
 env:
   global:
     - PATH=$TRAVIS_BUILD_DIR/pandoc:$PATH
