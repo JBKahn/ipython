@@ -99,6 +99,46 @@ except ImportError:
     sphinxify = None
 
 
+
+def dump(node, annotate_fields=True, include_attributes=True, indent='  '):
+    """
+    Return a formatted dump of the tree in *node*.  This is mainly useful for
+    debugging purposes.  The returned string will show the names and the values
+    for fields.  This makes the code impossible to evaluate, so if evaluation is
+    wanted *annotate_fields* must be set to False.  Attributes such as line
+    numbers and column offsets are not dumped by default.  If this is wanted,
+    *include_attributes* can be set to True.
+    """
+    import ast
+    def _format(node, level=0):
+        if isinstance(node, ast.AST):
+            fields = [(a, _format(b, level)) for a, b in ast.iter_fields(node)]
+            if include_attributes and node._attributes:
+                fields.extend([(a, _format(getattr(node, a), level))
+                               for a in node._attributes])
+            return ''.join([
+                node.__class__.__name__,
+                '(',
+                ', '.join(('%s=%s' % field for field in fields)
+                           if annotate_fields else
+                           (b for a, b in fields)),
+                ')'])
+        elif isinstance(node, list):
+            lines = ['[']
+            lines.extend((indent * (level + 2) + _format(x, level + 2) + ','
+                         for x in node))
+            if len(lines) > 1:
+                lines.append(indent * (level + 1) + ']')
+            else:
+                lines[-1] += ']'
+            return '\n'.join(lines)
+        return repr(node)
+    
+    if not isinstance(node, AST):
+        raise TypeError('expected AST, got %r' % node.__class__.__name__)
+    return _format(node)
+
+
 class ProvisionalWarning(DeprecationWarning):
     """
     Warning class for unstable features
@@ -2754,8 +2794,10 @@ class InteractiveShell(SingletonConfigurable):
 
             with self.display_trap:
                 # Compile to bytecode
+                # from there import print
                 try:
                     code_ast = compiler.ast_parse(cell, filename=cell_name)
+                    # print(dump(code_ast),'from', cell)
                 except self.custom_exceptions as e:
                     etype, value, tb = sys.exc_info()
                     self.CustomTB(etype, value, tb)
@@ -2863,10 +2905,12 @@ class InteractiveShell(SingletonConfigurable):
         True if an exception occurred while running code, False if it finished
         running.
         """
+        # from there import print
+        # print(nodelist)
         if not nodelist:
             return
-
         if interactivity == 'last_expr_or_assign':
+            # print(interactivity)
             if isinstance(nodelist[-1], _assign_nodes):
                 asg = nodelist[-1]
                 if isinstance(asg, ast.Assign) and len(asg.targets) == 1:
@@ -2895,15 +2939,16 @@ class InteractiveShell(SingletonConfigurable):
             to_run_exec, to_run_interactive = [], nodelist
         else:
             raise ValueError("Interactivity was %r" % interactivity)
-
         try:
             for i, node in enumerate(to_run_exec):
+                print("exec :", node)
                 mod = ast.Module([node])
                 code = compiler(mod, cell_name, "exec")
                 if self.run_code(code, result):
                     return True
 
             for i, node in enumerate(to_run_interactive):
+                print("singel :", node)
                 mod = ast.Interactive([node])
                 code = compiler(mod, cell_name, "single")
                 if self.run_code(code, result):
