@@ -1,0 +1,8 @@
+name: ipython_docs
+dependencies:
+- python=3.7
+- ipykernel
+- setuptools>=18.5
+- sphinx>=1.8
+- sphinx-rtd-theme
+- docrepr
