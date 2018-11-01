@@ -1,4 +1,4 @@
-This is a test
+A second test I commit on master but push with another name
 
 .. image:: https://codecov.io/github/ipython/ipython/coverage.svg?branch=master
     :target: https://codecov.io/github/ipython/ipython?branch=master
