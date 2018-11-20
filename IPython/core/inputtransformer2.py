@@ -593,6 +593,8 @@ class TransformerManager:
           The number of spaces by which to indent the next line of code. If
           status is not 'incomplete', this is None.
         """
+        from there import print
+        from IPython.core.interactiveshell import _should_be_async, _ast_asyncify
         # Remember if the lines ends in a new line.
         ends_with_newline = False
         for character in reversed(cell):
@@ -638,14 +640,23 @@ class TransformerManager:
         except SyntaxError:
             return 'invalid', None
 
+        data = ''.join(lines)
+        fix_async_indent = 0
+        if _should_be_async(data):
+            fix_async_indent = -4
+            import textwrap
+            data = "async def foo():\n"+textwrap.indent(data, '    ')
+        lines = data.splitlines(keepends=True)
+
+
         tokens_by_line = make_tokens_by_line(lines)
 
         if not tokens_by_line:
-            return 'incomplete', find_last_indent(lines)
+            return 'incomplete', find_last_indent(lines) - fix_async_indent
 
         if tokens_by_line[-1][-1].type != tokenize.ENDMARKER:
             # We're in a multiline string or expression
-            return 'incomplete', find_last_indent(lines)
+            return 'incomplete', find_last_indent(lines) - fix_async_indent
 
         newline_types = {tokenize.NEWLINE, tokenize.COMMENT, tokenize.ENDMARKER}
 
@@ -670,7 +681,7 @@ class TransformerManager:
                 ix += 1
 
             indent = tokens_by_line[-1][ix].start[1]
-            return 'incomplete', indent + 4
+            return 'incomplete', indent + 4 + fix_async_indent
 
         if tokens_by_line[-1][0].line.endswith('\\'):
             return 'incomplete', None
@@ -686,12 +697,12 @@ class TransformerManager:
             return 'invalid', None
         else:
             if res is None:
-                return 'incomplete', find_last_indent(lines)
+                return 'incomplete', find_last_indent(lines) +  fix_async_indent
 
         if last_token_line and last_token_line[0].type == tokenize.DEDENT:
             if ends_with_newline:
                 return 'complete', None
-            return 'incomplete', find_last_indent(lines)
+            return 'incomplete', find_last_indent(lines) + fix_async_indent
 
         # If there's a blank line at the end, assume we're ready to execute
         if not lines[-1].strip():
