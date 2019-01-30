@@ -218,7 +218,17 @@ z = 123  # this item will be deleted
 def foo(y):
     return y + 3
 
+class NoEq:
+    '''
+    Equality does not reeturn a boolean (eg numpy arrays)
+    '''
+    def __eq__(self, other):
+        return [False, True]
+
 class Baz(object):
+
+    ne = NoEq()
+
     def __init__(self, x):
         self.x = x
     def bar(self, y):
@@ -233,6 +243,7 @@ class Baz(object):
 class Bar:    # old-style class: weakref doesn't work for it on Python < 2.7
     def foo(self):
         return 1
+
 """)
 
         #
@@ -307,7 +318,16 @@ x = 10
 def foo(y):
     return y + 4
 
+class NoEq:
+    '''
+    Equality does not reeturn a boolean (eg numpy arrays)
+    '''
+    def __eq__(self, other):
+        return [False, True]
+
+
 class Baz(object):
+    ne = NoEq()
     def __init__(self, x):
         self.x = x
     def bar(self, y):
@@ -319,6 +339,7 @@ class Baz(object):
 class Bar:    # old-style class
     def foo(self):
         return 2
+
 """)
 
         def check_module_contents():

@@ -168,6 +168,14 @@ MATCHES_LIMIT = 500
 
 _deprecation_readline_sentinel = object()
 
+names = []
+for c in range(65, 90):
+    try:
+        names.append(unicodedata.name(chr(c)))
+    except ValueError:
+        pass
+names
+
 
 class ProvisionalCompleterWarning(FutureWarning):
     """
@@ -1684,6 +1692,20 @@ class IPCompleter(Completer):
                 pass
         return u'', []
 
+    def fwd_unicode_match(self, text:str):
+    # initial code based on latex_matches() method
+        slashpos = text.rfind('\\')
+        # if text starts with slash
+        print(slashpos) # debug
+        if slashpos > -1:
+            s = text[slashpos+1:]  # note the +1
+
+            print(s) # debug
+            # instead of looking wether it is unicode, return all the things from
+            #`names` that stars with `s`
+
+            return s, [x for x in names if x.startswith(s)]
+
 
     def latex_matches(self, text):
         u"""Match Latex syntax for unicode characters.
@@ -1984,7 +2006,7 @@ class IPCompleter(Completer):
                 return latex_text, latex_matches, ['latex_matches']*len(latex_matches), ()
             name_text = ''
             name_matches = []
-            for meth in (self.unicode_name_matches, back_latex_name_matches, back_unicode_name_matches):
+            for meth in (self.unicode_name_matches, self.fwd_unicode_match, back_latex_name_matches, back_unicode_name_matches):
                 name_text, name_matches = meth(base_text)
                 if name_text:
                     return name_text, name_matches[:MATCHES_LIMIT], \
