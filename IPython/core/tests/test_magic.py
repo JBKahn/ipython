@@ -1155,4 +1155,4 @@ def test_timeit_arguments():
     else:
         # 3.7 optimize no-op statement like above out, and complain there is
         # nothing in the for loop.
-        _ip.magic("timeit a=('#')")
+        _ip.magic("timeit -n1 -r1 a=('#')")

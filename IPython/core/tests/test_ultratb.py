@@ -309,14 +309,22 @@ def r3o2():
             ip.run_cell("non_recurs()")
 
     def test_recursion_one_frame(self):
+        rl = sys.getrecursionlimit()
+        sys.setrecursionlimit(600)
         with tt.AssertPrints("1 frames repeated"):
             ip.run_cell("r1()")
+        sys.setrecursionlimit(rl)
 
     def test_recursion_three_frames(self):
+        rl = sys.getrecursionlimit()
+        sys.setrecursionlimit(600)
         with tt.AssertPrints("3 frames repeated"):
             ip.run_cell("r3o2()")
+        sys.setrecursionlimit(rl)
 
     def test_find_recursion(self):
+        rl = sys.getrecursionlimit()
+        sys.setrecursionlimit(600)
         captured = []
         def capture_exc(*args, **kwargs):
             captured.append(sys.exc_info())
@@ -340,6 +348,7 @@ def r3o2():
         last_unique, repeat_length = find_recursion(etype, evalue, records)
         self.assertEqual(last_unique, 2)
         self.assertEqual(repeat_length, 3)
+        sys.setrecursionlimit(rl)
 
 
 #----------------------------------------------------------------------------
