@@ -25,6 +25,11 @@ from IPython.core.completer import (
     Completion, provisionalcompleter, match_dict_keys, _deduplicate_completions)
 from nose.tools import assert_in, assert_not_in
 
+from IPython import InteractiveShell
+
+def get_ipython():
+    return InteractiveShell.instance()
+
 #-----------------------------------------------------------------------------
 # Test functions
 #-----------------------------------------------------------------------------

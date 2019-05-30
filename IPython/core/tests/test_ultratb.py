@@ -18,6 +18,12 @@ from IPython.testing.decorators import onlyif_unicode_paths
 from IPython.utils.syspathcontext import prepended_to_syspath
 from IPython.utils.tempdir import TemporaryDirectory
 
+from IPython import InteractiveShell
+
+def get_ipython():
+    return InteractiveShell.instance()
+
+
 ip = get_ipython()
 
 file_1 = """1

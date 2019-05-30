@@ -11,7 +11,10 @@ from textwrap import dedent, indent
 from unittest import TestCase
 from IPython.testing.decorators import skip_without
 
-ip = get_ipython()
+from IPython import InteractiveShell
+
+ip = InteractiveShell.instance()
+
 iprc = lambda x: ip.run_cell(dedent(x)).raise_error()
 iprc_nr = lambda x: ip.run_cell(dedent(x))
 

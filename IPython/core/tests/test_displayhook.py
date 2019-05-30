@@ -3,6 +3,11 @@ from IPython.testing.tools import AssertPrints, AssertNotPrints
 from IPython.core.displayhook import CapturingDisplayHook
 from IPython.utils.capture import CapturedIO
 
+from IPython import InteractiveShell
+
+def get_ipython():
+    return InteractiveShell.instance()
+
 ip = get_ipython()
 
 def test_output_displayed():

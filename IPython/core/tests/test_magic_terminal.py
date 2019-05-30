@@ -18,6 +18,12 @@ from IPython.testing import tools as tt
 #-----------------------------------------------------------------------------
 # Globals
 #-----------------------------------------------------------------------------
+
+from IPython import InteractiveShell
+
+def get_ipython():
+    return InteractiveShell.instance()
+
 ip = get_ipython()
 
 #-----------------------------------------------------------------------------

@@ -19,6 +19,7 @@ from . import tools
 from IPython.core import page
 from IPython.utils import io
 from IPython.terminal.interactiveshell import TerminalInteractiveShell
+from IPython.core.interactiveshell import InteractiveShell
 
 
 class StreamProxy(io.IOStream):
@@ -47,6 +48,8 @@ class StreamProxy(io.IOStream):
 
 def get_ipython():
     # This will get replaced by the real thing once we start IPython below
+    if InteractiveShell._instance:
+        return InteractiveShell._instance
     return start_ipython()
 
 

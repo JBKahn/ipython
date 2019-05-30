@@ -6,6 +6,11 @@ import os.path
 import nose.tools as nt
 from IPython.utils.tempdir import TemporaryDirectory
 
+from IPython import InteractiveShell
+
+def get_ipython():
+    return InteractiveShell.instance()
+
 _ip = get_ipython()
 
 def test_logstart_inaccessible_file():

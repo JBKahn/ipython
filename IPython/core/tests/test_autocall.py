@@ -10,9 +10,9 @@ from IPython.core.prefilter import AutocallChecker
 from IPython.utils import py3compat
 from IPython.testing.globalipapp import get_ipython
 
+from IPython import InteractiveShell
 
-ip = get_ipython()
-
+ip = InteractiveShell.instance()
 
 def doctest_autocall():
     """

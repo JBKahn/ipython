@@ -17,6 +17,11 @@ from IPython.utils import py3compat
 # Globals
 #-----------------------------------------------------------------------------
 
+from IPython import InteractiveShell
+
+def get_ipython():
+    return InteractiveShell.instance()
+
 # Get the public instance of IPython
 ip = get_ipython()
 

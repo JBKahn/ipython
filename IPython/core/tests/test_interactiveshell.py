@@ -36,6 +36,12 @@ from IPython.utils.process import find_cmd
 # Globals
 #-----------------------------------------------------------------------------
 # This is used by every single test, no point repeating it ad nauseam
+
+from IPython import InteractiveShell
+
+def get_ipython():
+    return InteractiveShell.instance()
+
 ip = get_ipython()
 
 #-----------------------------------------------------------------------------
