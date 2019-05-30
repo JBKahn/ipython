@@ -2,6 +2,10 @@ from IPython.utils.capture import capture_output
 
 import nose.tools as nt
 
+from IPython.core.interactiveshell import InteractiveShell
+
+_ip = InteractiveShell.instance()
+
 def test_alias_lifecycle():
     name = 'test_alias1'
     cmd = 'echo "Hello"'
