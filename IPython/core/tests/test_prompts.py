@@ -4,7 +4,10 @@
 import unittest
 
 from IPython.core.prompts import  LazyEvaluate
-from IPython.testing.globalipapp import get_ipython
+
+from IPython.terminal.interactiveshell import InteractiveShell
+def get_ipython():
+    return InteractiveShell.instance()
 
 ip = get_ipython()
 

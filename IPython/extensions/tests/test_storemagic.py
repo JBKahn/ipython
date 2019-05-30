@@ -2,8 +2,12 @@ import tempfile, os
 
 from traitlets.config.loader import Config
 import nose.tools as nt
+from IPython.terminal.interactiveshell import InteractiveShell
+def get_ipython():
+    return InteractiveShell.instance()
 
 ip = get_ipython()
+
 ip.magic('load_ext storemagic')
 
 def test_store_restore():

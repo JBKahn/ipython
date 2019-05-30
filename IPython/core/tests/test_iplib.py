@@ -8,8 +8,10 @@
 import nose.tools as nt
 
 # our own packages
-from IPython.testing.globalipapp import get_ipython
 
+from IPython.terminal.interactiveshell import InteractiveShell
+def get_ipython():
+    return InteractiveShell.instance()
 #-----------------------------------------------------------------------------
 # Globals
 #-----------------------------------------------------------------------------

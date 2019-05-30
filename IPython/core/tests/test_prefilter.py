@@ -6,8 +6,10 @@
 import nose.tools as nt
 
 from IPython.core.prefilter import AutocallChecker
-from IPython.testing.globalipapp import get_ipython
 
+from IPython.terminal.interactiveshell import InteractiveShell
+def get_ipython():
+    return InteractiveShell.instance()
 #-----------------------------------------------------------------------------
 # Tests
 #-----------------------------------------------------------------------------
