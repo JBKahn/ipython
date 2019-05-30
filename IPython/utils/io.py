@@ -133,6 +133,8 @@ class Tee(object):
 
     def close(self):
         """Close the file and restore the channel."""
+        if self._closed == True:
+            raise ValueError('Tee already closed !')
         self.flush()
         setattr(sys, self.channel, self.ostream)
         self.file.close()
