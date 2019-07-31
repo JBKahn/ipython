@@ -20,6 +20,7 @@ import sys
 
 from traitlets.config.configurable import Configurable
 from traitlets import List
+from base64 import encodebytes
 
 # This used to be defined here - it is imported for backwards compatibility
 from .display import publish_display_data
@@ -27,6 +28,9 @@ from .display import publish_display_data
 #-----------------------------------------------------------------------------
 # Main payload class
 #-----------------------------------------------------------------------------
+
+IMAGE_CODE = '\033]1337;File=name={name};inline={inline};size={size};width={width};height={height};preserveAspectRatio={preserve_aspect_ratio}:{base64_img}\a'
+IMAGE_CODE = '\033]1337;File=name=name;inline=true;:{}\a'
 
 class DisplayPublisher(Configurable):
     """A traited class that publishes display data to frontends.
@@ -99,7 +103,9 @@ class DisplayPublisher(Configurable):
         """
 
         # The default is to simply write the plain text data using sys.stdout.
-        if 'text/plain' in data:
+        if 'image/png' in data:
+            print(IMAGE_CODE.format(encodebytes(data['image/png']).decode()))
+        elif 'text/plain' in data:
             print(data['text/plain'])
 
     def clear_output(self, wait=False):

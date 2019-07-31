@@ -89,3 +89,8 @@ class RichPromptDisplayHook(DisplayHook):
                 )
             else:
                 sys.stdout.write(prompt_txt)
+
+    def write_format_data(self, format_dict, md_dict=None):
+        print(format_dict.keys())
+        super().write_format_data(format_dict, md_dict)
+

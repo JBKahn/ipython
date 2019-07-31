@@ -274,6 +274,8 @@ def find_gui_and_backend(gui=None, gui_select=None):
     """
 
     import matplotlib
+    #if gui == 'inline':
+    #    return None, 'module://ipykernel.pylab.backend_inline'
 
     if gui and gui != 'auto':
         # select backend based on requested gui

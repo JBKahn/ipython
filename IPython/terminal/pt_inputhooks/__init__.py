@@ -13,9 +13,10 @@ backends = [
     'wx',
     'pyglet', 'glut',
     'osx',
+    'inline'
 ]
 
-registered = {}
+registered = {'inline': None}
 
 def register(name, inputhook):
     """Register the function *inputhook* as an event loop integration."""
