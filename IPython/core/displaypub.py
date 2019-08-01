@@ -107,8 +107,6 @@ class DisplayPublisher(Configurable):
         if self.shell is not None:
             handlers = self.shell.handlers
 
-        print(handlers, self.shell)
-
         for mime, handler in handlers.items():
             if mime in data:
                 handler(data[mime], metadata.get(mime, None))

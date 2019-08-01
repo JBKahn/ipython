@@ -1276,9 +1276,9 @@ class Image(DisplayObject):
         if self.unconfined:
             md['unconfined'] = self.unconfined
         if md or always_both:
-            return b64_data, md
+            return self.data, md
         else:
-            return b64_data
+            return self.data
 
     def _repr_png_(self):
         if self.embed and self.format == self._FMT_PNG:
