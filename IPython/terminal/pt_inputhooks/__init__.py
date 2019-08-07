@@ -13,7 +13,6 @@ backends = [
     'wx',
     'pyglet', 'glut',
     'osx',
-    'inline'
 ]
 
 registered = {}
