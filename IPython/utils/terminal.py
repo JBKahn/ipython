@@ -14,8 +14,6 @@ Authors:
 
 import os
 import sys
-import tty
-import termios
 import warnings
 from shutil import get_terminal_size as _get_terminal_size
 
@@ -110,50 +108,3 @@ def freeze_term_title():
 
 def get_terminal_size(defaultx=80, defaulty=25):
     return _get_terminal_size((defaultx, defaulty))
-
-
-### Iterm 2 specific utils.
-
-
-def _read_response():
-    """
-    Read bytes bytes until we got `n`
-    """
-    res = ''
-    while True:
-        res += sys.stdin.read(1)
-        if res[-1] == 'n':
-            break
-    return res
-
-
-def is_iterm2():
-    """
-    Iterm 2 is one of the terminal that support inline images.
-    This code should properly detect if we are running in iterm2.
-
-    It needs to be ran outside of prompt toolkit as it needs direct access to
-    stdin/out.
-    """
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    new = termios.tcgetattr(fd)
-    new[3] = new[3] & ~termios.ICANON & ~termios.ECHO
-    try:
-        tty.setraw(fd)
-        termios.tcsetattr(fd, termios.TCSADRAIN, new)
-        print('\x1b[1337n', end='')
-        print('\x1b[5n', end='')
-        sys.stdout.flush()
-        res = _read_response()
-        if not res.startswith('\x1b['):
-            raise ValueError
-        if 'ITERM2' in res:
-            _read_response()
-            return True
-        else:
-            return False
-
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
-    return res

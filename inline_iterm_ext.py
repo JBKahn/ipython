@@ -78,6 +78,10 @@ def load_ipython_extension(ipython):
     # new magics or aliases, for example
     if is_iterm2():
         register('inline', None)
+        ipython.display_formatter.active_types.append('image/png')
+        ipython.display_formatter.active_types.append('image/jpg')
+        ipython.display_formatter.formatters['image/png'].enabled = True
+        ipython.display_formatter.enabled = True
         ipython.mime_renderers['image/png'] = imcat
         ipython.mime_renderers['image/jpg'] = imcat
     else:
