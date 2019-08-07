@@ -260,8 +260,6 @@ class DisplayHook(Configurable):
             self.start_displayhook()
             self.write_output_prompt()
             format_dict, md_dict = self.compute_format_data(result)
-            if 'image/png' in format_dict:
-                print(']]]]', type(format_dict['image/png']))
             self.update_user_ns(result)
             self.fill_exec_result(result)
             if format_dict:

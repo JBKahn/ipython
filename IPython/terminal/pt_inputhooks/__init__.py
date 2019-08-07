@@ -16,7 +16,7 @@ backends = [
     'inline'
 ]
 
-registered = {'inline': None}
+registered = {}
 
 def register(name, inputhook):
     """Register the function *inputhook* as an event loop integration."""
