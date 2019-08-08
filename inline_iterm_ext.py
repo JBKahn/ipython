@@ -13,6 +13,12 @@ from IPython.terminal.pt_inputhooks import register
 ### Iterm 2 specific utils.
 
 
+def mathcat(data, meta):
+    from IPython.lib.latextools import latex_to_png
+    ping = latex_to_png(f'$${data}$$'.replace('\displaystyle', '').replace('$$$', '$$'), color='white')
+
+    imcat(ping, meta)
+
 def _read_response():
     """
     Read bytes bytes until we got `n`
@@ -72,6 +78,11 @@ def imcat(image_data, metadata):
     else:
         raise ValueError('Unknown type', type(image_data))
 
+def register_mimerenderer(ipython, mime, handler):
+    ipython.display_formatter.active_types.append(mime)
+    ipython.display_formatter.formatters[mime].enabled = True
+    ipython.mime_renderers[mime] = handler
+
 def load_ipython_extension(ipython):
     # The `ipython` argument is the currently active `InteractiveShell`
     # instance, which can be used in any way. This allows you to register
@@ -81,9 +92,10 @@ def load_ipython_extension(ipython):
         ipython.display_formatter.active_types.append('image/png')
         ipython.display_formatter.active_types.append('image/jpg')
         ipython.display_formatter.formatters['image/png'].enabled = True
-        ipython.display_formatter.enabled = True
         ipython.mime_renderers['image/png'] = imcat
         ipython.mime_renderers['image/jpg'] = imcat
+        ipython.display_formatter.enabled = True
+        register_mimerenderer(ipython, 'text/latex', mathcat)
     else:
         print('can only handle ITerm2 for now')
 
