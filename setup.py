@@ -257,6 +257,7 @@ setup_args.update(setuptools_extra_args)
 
 
 def main():
+    print('Hello there')
     setup(**setup_args)
 
 if __name__ == '__main__':
